@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "140.777.01 - Zixu Luo’s Website",
+    "section": "",
+    "text": "This is Zixu(Jerry) Luo, a master student in the Department of Biostatistics. I come from mainland China and this is the very first time I have ever been abroad. My English nickname is Jerry because my first English teacher gave me the name about 20 years ago when I began to learn English.\n\n\\(\\int_{}^{} (\\mathrm{happiness + sadness + madness})d\\mathrm{life} = Jerry\\)"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About me",
@@ -47,12 +54,5 @@
     "title": "Example analysis",
     "section": "Tobacco and esophageal cancer",
     "text": "Tobacco and esophageal cancer\nUsing a type of faceting (facet_wrap()), the effect of tobacco consumption can be identified conditioned on alcohol consumption. Here I filter the sample, only focusing on those older than 44 years old.\n\ntemp &lt;- summarize(group_by(filter(data, !agegp %in% unique(data$agegp)[1:2]),\n                           alcgp, tobgp),\n                  n1 = sum(ncases),\n                  n2 = sum(ncontrols))\n\n`summarise()` has grouped output by 'alcgp'. You can override using the\n`.groups` argument.\n\ntemp &lt;- mutate(temp,\n               case_proportion = n1 / (n1 + n2) )\n\n\nggplot(select(temp, -n1, -n2), aes(x = tobgp, y = case_proportion)) +\n  geom_bar(stat = \"identity\", position = \"dodge\") +\n  facet_wrap(~alcgp, nrow = 1) +\n  labs(title = \"Relationship between the proportion of cases\\nand the level of tobacco consumption\",\n       subtitle = \"Four facets correspond to different alcohol consumption.\",\n       x = \"tobacco consumption\", y = \"proportion of cases\",\n       caption = \"Plot by Zixu\") +\n  theme(plot.title = element_text(hjust = 0.5, face = \"bold\"),\n        plot.subtitle = element_text(hjust = 0.5),\n        axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\ntemp &lt;- summarize(group_by(data, alcgp, tobgp),\n                  case_proportion = sum(ncases) / (sum(ncases) + sum(ncontrols)) )\n\n`summarise()` has grouped output by 'alcgp'. You can override using the\n`.groups` argument.\n\nggplot(temp, aes(x = tobgp, y = case_proportion)) +\n  geom_bar(stat = \"identity\", position = \"dodge\") +\n  facet_wrap(~alcgp, nrow = 1) +\n  labs(title = \"Relationship between the proportion of cases\\nand the level of tobacco consumption\",\n       subtitle = \"Four facets correspond to different alcohol consumption.\",\n       x = \"tobacco consumption\", y = \"proportion of cases\",\n       caption = \"Plot by Zixu\") +\n  theme(plot.title = element_text(hjust = 0.5, face = \"bold\"),\n        plot.subtitle = element_text(hjust = 0.5),\n        axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\n\nCorresponding result without filtering the young subjects below 45 years old.\n\n\n\nIt can be concluded that except those who abuses alcohol, more tobacco consumption is associated with higher risk of esophageal cancer.\nIn summary, both alcohol and tobacco have a adverse effect on esophageal cancer. However, the extent of their bad effects can be influenced by age. Generally the elderly are more vulnerable to the harmful impact of alcohol and tobacco. Moreover, there is also a significant interaction between alcohol and tobacco.\n\n\n\n\n\n\nNote\n\n\n\nTobacco exerts a bad health effect!"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "140.777.01 - Zixu Luo’s Website",
-    "section": "",
-    "text": "This is Zixu(Jerry) Luo, a master student in the Department of Biostatistics. I come from mainland China and this is the very first time I have ever been abroad. My English nickname is Jerry because my first English teacher gave me the name about 20 years ago when I began to learn English.\n\n\\(\\int_{}^{} (\\mathrm{happiness + sadness + madness})d\\mathrm{life} = Jerry\\)"
   }
 ]
