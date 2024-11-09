@@ -1,0 +1,15 @@
+{
+  "hash": "b6c68d189766fddb0f6a98eac104de36",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"About me\"\n---\n\n\n## Educational experience\n\n-   ScM in Biostatistics: August 2024 \\~\n\n    Bloomberg School of Public Health, Johns Hopkins University\n\n-   Bachlor in Automation: August 2018 \\~ July 2024\n\n    With a minor in Statistics, Tsinghua University\n\n## Personal information\n\n-   email: zluo33\\@jh.edu\n\n-   Wechat: ZiXuJerry\n\n-   tel: (443) 925-1520\n\n\n::: {.cell}\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

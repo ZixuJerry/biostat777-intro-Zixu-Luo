@@ -1,0 +1,15 @@
+{
+  "hash": "79f4ec7e756fc578dd0cb3f64f2499c8",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"140.777.01 - Zixu Luo's Website\"\n---\n\n\nThis is Zixu(Jerry) Luo, a master student in the Department of Biostatistics. I come from mainland China and this is the very first time I have ever been abroad. My English nickname is Jerry because my first English teacher gave me the name about 20 years ago when I began to learn English.\n\n![](images/JerryMouse.jpg){width=\"329\"}\n\n\n::: {.cell}\n\n:::\n\n\n$\\int_{}^{} (\\mathrm{happiness + sadness + madness})d\\mathrm{life} = Jerry$\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

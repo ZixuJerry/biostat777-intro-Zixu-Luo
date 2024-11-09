@@ -1,0 +1,323 @@
+---
+title: "Example analysis"
+author: 
+  - name: Zixu Luo
+    affiliation: Department of Biostatistics, Johns Hopkins
+description: "Data analysis example of Project 1"
+date: 2024-11-08
+knitr: true
+draft: false
+bibliography: references.bib
+---
+
+For the data analysis, I choose to use a built-in dataset in R called `esoph`. This is a case-control study of (o)esophageal cancer in Ille-et-Vilaine, France.[@Breslow] The data frame contain the following variables:
+
+| *Variable name* | *What it refers*    |
+|-----------------|---------------------|
+| `agegp`         | Age group           |
+| `alcgp`         | Alcohol consumption |
+| `tobgp`         | Tobacco consumption |
+| `ncases`        | Number of cases     |
+| `ncontrols`     | Number of controls  |
+
+The question that we can aim to answer with the data is the association between alcohol & tobacco consumption and the probability of getting esophageal cancer. The intended audiences for the data analysis are both researchers on that cancer and the corresponding clinical staff.
+
+![](images/EsophagusCancer.jpg){fig-align="center" width="158"}
+
+```{r}
+data <- esoph
+head(data, 15)
+```
+
+## Age is an important confounder
+
+First we can take a look at the age distribution of the study population, and the different patterns for alcohol & tobacco consumption of the young and the old. From the bar plot it can be concluded that in this sample the distribution of tobacco consumption is almost consistent in each age group, indicating that this is a balanced study design.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# a bar plot showing the consumption of tobacco in different age groups
+ggplot(data, aes(x = agegp, y = ncases + ncontrols, fill = tobgp)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Bar plot revealing the relationship between age and tobacco consumption",
+       x = "age", y = "number of participants",
+       subtitle="Age is roughly balanced at different tobacco level.",
+       caption = "Plot by Zixu") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))
+
+```
+
+Similarly, it can be found that there is a slightly unbalanced trend between age and alcohol consumption.
+
+
+```{r}
+
+# a bar plot showing the consumption of alcohol in different age groups
+ggplot(data, aes(x = agegp, y = ncases + ncontrols, fill = alcgp)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Bar plot revealing the relationship between age and alcohol consumption",
+       x = "age", y = "number of participants",
+       subtitle="Middle-aged people are more likely to abuse alcohol.",
+       caption = "Plot by Zixu") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))
+
+
+```
+
+The proportion of cases gets higher as people grow older. However those aged 75+ have a lower proportion of cases than those aged 55-74 and it may be due to the small sample size.
+
+```{r fig.width = 4, fig.height = 4}
+temp <- summarize(group_by(data, agegp),
+                  case_proportion = sum(ncases)/ (sum(ncases) + sum(ncontrols)))
+
+ggplot(temp, aes(x = agegp, y = case_proportion, group = 1)) +
+  geom_point(size = 2) +
+  labs(title = "Trend of the proportion of cases\nas people grow older",
+       x = "age", y = "proportion of cases",
+       caption = "Plot by Zixu")
+
+```
+
+## Alcohol and esophageal cancer
+
+What if we take alcohol consumption into consideration before looking into the relationship between age and case proportion? This could be accomplished by dividing the sample into 4 alcohol groups and draw 4 lines separately.
+
+
+```{r}
+
+temp <- summarize(group_by(data, agegp, alcgp),
+                  case_proportion = sum(ncases)/ (sum(ncases) + sum(ncontrols)))
+
+
+ggplot(temp, aes(x = agegp, y = case_proportion, group = alcgp, colour = alcgp)) +
+  geom_line(linewidth = 0.8) +
+  labs(title = "Trend of the proportion of cases as people grow older,\nconditioning on the level of alcohol consumption",
+       subtitle = "Higher alcohol consumption leads to worse disease outcome.",
+       x = "age", y = "proportion of cases",
+       caption = "Plot by Zixu") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))
+
+
+```
+
+Comparing the 4 alcohol groups, it seems like when an individual drinks a lot (120+), he or she may have already had a significantly higher incidence rate even at a very young age. For those moderate drinkers, only when they reach 50 or 60 years old is there a significantly higher incidence rate than the non-drinkers.
+
+::: {.callout-note}
+Alcohol exerts a bad health effect!
+(I get help of the construction of a callout block from [@callout].)
+:::
+
+
+
+## Tobacco and esophageal cancer
+
+Using a type of faceting (`facet_wrap()`), the effect of tobacco consumption can be identified conditioned on alcohol consumption. Here I filter the sample, only focusing on those older than 44 years old.
+
+```{r}
+
+temp <- summarize(group_by(filter(data, !agegp %in% unique(data$agegp)[1:2]),
+                           alcgp, tobgp),
+                  n1 = sum(ncases),
+                  n2 = sum(ncontrols))
+temp <- mutate(temp,
+               case_proportion = n1 / (n1 + n2) )
+
+
+ggplot(select(temp, -n1, -n2), aes(x = tobgp, y = case_proportion)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~alcgp, nrow = 1) +
+  labs(title = "Relationship between the proportion of cases\nand the level of tobacco consumption",
+       subtitle = "Four facets correspond to different alcohol consumption.",
+       x = "tobacco consumption", y = "proportion of cases",
+       caption = "Plot by Zixu") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+```
+
+```{r}
+#| label: Margin figures
+#| fig-cap: "Corresponding result without filtering the young subjects below 45 years old."
+#| column: margin
+
+temp <- summarize(group_by(data, alcgp, tobgp),
+                  case_proportion = sum(ncases) / (sum(ncases) + sum(ncontrols)) )
+
+ggplot(temp, aes(x = tobgp, y = case_proportion)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~alcgp, nrow = 1) +
+  labs(title = "Relationship between the proportion of cases\nand the level of tobacco consumption",
+       subtitle = "Four facets correspond to different alcohol consumption.",
+       x = "tobacco consumption", y = "proportion of cases",
+       caption = "Plot by Zixu") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+It can be concluded that except those who abuses alcohol, more tobacco consumption is associated with higher risk of esophageal cancer.
+
+In summary, both alcohol and tobacco have a adverse effect on esophageal cancer. However, the extent of their bad effects can be influenced by age. Generally the elderly are more vulnerable to the harmful impact of alcohol and tobacco. Moreover, there is also a significant interaction between alcohol and tobacco.
+
+
+::: {.callout-note}
+Tobacco exerts a bad health effect!
+:::
+
+
+# Functions I used from each of the package
+
+dplyr: `summarize`,`group_by`, `mutate`, `filter`, `select` [@dplyr]
+
+ggplot2: `geom_bar`, `geom_point`, `geom_line`
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+

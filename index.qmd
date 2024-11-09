@@ -1,0 +1,13 @@
+---
+title: "140.777.01 - Zixu Luo's Website"
+---
+
+This is Zixu(Jerry) Luo, a master student in the Department of Biostatistics. I come from mainland China and this is the very first time I have ever been abroad. My English nickname is Jerry because my first English teacher gave me the name about 20 years ago when I began to learn English.
+
+![](images/JerryMouse.jpg){width="329"}
+
+```{r echo = FALSE, fig.height = 3, fig.width = 3}
+# knitr::include_graphics(path = "JerryMouse.jpg")
+```
+
+$\int_{}^{} (\mathrm{happiness + sadness + madness})d\mathrm{life} = Jerry$
